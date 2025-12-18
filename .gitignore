@@ -389,3 +389,4 @@ crashlytics-build.properties
 *.swp
 
 UserInterfaceState.xcuserstate
+.vscode/settings.json
