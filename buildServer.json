@@ -1,0 +1,19 @@
+{
+	"name": "xcode build server",
+	"version": "0.2",
+	"bspVersion": "2.0",
+	"languages": [
+		"c",
+		"cpp",
+		"objective-c",
+		"objective-cpp",
+		"swift"
+	],
+	"argv": [
+		"/usr/local/bin/xcode-build-server"
+	],
+	"workspace": "/Users/technolo-gia/develop/pre-04/fizz/fizz.xcodeproj/project.xcworkspace",
+	"build_root": "/Users/technolo-gia/Library/Developer/Xcode/DerivedData/fizz-hgvaqfuazidbngezutryxbcverim",
+	"scheme": "fizz",
+	"kind": "xcode"
+}
