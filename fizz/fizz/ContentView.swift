@@ -23,17 +23,11 @@ struct ContentView: View {
                 case .end:
                     EndView()
                 case .deck:
-                    // DeckCreatorView() // Not implemented in this first pass
-                    Text("Deck Creator Placeholder")
-                        .foregroundColor(.white)
+                    DeckCreatorView()
                 case .history:
-                    // HistoryView()
-                    Text("History Placeholder")
-                        .foregroundColor(.white)
+                    HistoryView()
                 case .settings:
-                    // SettingsView()
-                    Text("Settings Placeholder")
-                        .foregroundColor(.white)
+                    SettingsView()
                 }
             }
             .sparklerBackground()

@@ -10,7 +10,7 @@ class AppViewModel: ObservableObject {
     }
     
     @Published var currentState: AppState = .top
-    @Published var selectedGenre: Genre = .chat
+    @Published var selectedGenre: Genre = .casual
     
     // Navigation Methods
     func startMatching() {
