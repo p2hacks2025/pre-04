@@ -84,7 +84,9 @@ struct TopView: View {
                         print("Menu button tapped")
                         let generator = UIImpactFeedbackGenerator(style: .light)
                         generator.impactOccurred()
+                        SoundManager.shared.playCursor()
                         appState.openMenu()
+
                     }) {
                         Image(systemName: "line.3.horizontal")
                             .font(.system(size: 24))
@@ -118,8 +120,12 @@ struct TopView: View {
             }
             .safeAreaPadding()
         }
+        .onAppear {
+            SoundManager.shared.playBGM()
+        }
         .sheet(isPresented: $showingGenreSelector) {
             GenreSelectorView(isPresented: $showingGenreSelector)
+
                 .presentationDetents([.fraction(0.6)]) // Drawer-like
                 .presentationDragIndicator(.visible)
         }

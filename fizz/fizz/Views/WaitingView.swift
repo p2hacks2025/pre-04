@@ -65,7 +65,7 @@ struct WaitingView: View {
                                     .foregroundColor(.white.opacity(0.8))
                             }
                         } else {
-                             Text("Matched!")
+                             Text("マッチしました！！")
                                 .font(.title)
                                 .fontWeight(.bold)
                                 .foregroundColor(.orange)
@@ -146,7 +146,10 @@ struct WaitingView: View {
         // Intense burst
         sparklerState.currentIntensity = 1.0
         
+        SoundManager.shared.playFireUp()
+        
         let generator = UIImpactFeedbackGenerator(style: .heavy)
+
         generator.impactOccurred()
         
         // 4. Transition to Chat after brief spectacle
