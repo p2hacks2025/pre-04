@@ -2,7 +2,7 @@
 
 ## プロダクト名
 F!zz (フィズ)
-<img width="500" height="500" alt="Fizz 黒アイコン" src="https://github.com/user-attachments/assets/0a4527df-c6e8-46fe-9d88-8b074b98d818" />
+<img width="100" height="100" alt="Fizz 黒アイコン" src="https://github.com/user-attachments/assets/0a4527df-c6e8-46fe-9d88-8b074b98d818" />
 
 ## コンセプト
 「線香花火のように、はかなく温かい。一瞬の灯りでつながる匿名SNS」 現代のSNSに漂う「ずっと残る」「反応を気にしすぎる」疲れを、線香花火のような「いつかは消える刹那性」と「その瞬間だけの温もり」で解消する、新しい形のコミュニケーションアプリです。
@@ -52,4 +52,4 @@ F!zz (フィズ)
 - ここには利用したフレームワークやライブラリを書きます。
 
 ### その他開発に使用したツール・サービス
-Github,Figma,VScode,Gemini,Canva
+- Github,Figma,VScode,Gemini,Canva
