@@ -56,15 +56,15 @@ struct MenuView: View {
                 // Menu Items
                 VStack(alignment: .leading, spacing: 0) {
                     MenuRow(icon: "greetingcard", text: "会話デッキ") {
-                        // appState.navigate(to: .deck)
+                        appState.navigate(to: .deck)
                     }
                     
                     MenuRow(icon: "clock", text: "履歴") {
-                        // appState.navigate(to: .history)
+                        appState.navigate(to: .history)
                     }
                     
                     MenuRow(icon: "gearshape", text: "設定") {
-                        // appState.navigate(to: .settings)
+                        appState.navigate(to: .settings)
                     }
                 }
                 .padding(.vertical, 20)

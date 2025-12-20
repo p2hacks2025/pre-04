@@ -17,10 +17,20 @@ class AppState {
     var activeDeck: Deck? = nil
     var chatHistories: [ChatHistory] = []
     
+    // Settings
+    var isSoundEnabled: Bool = true
+    var isVibrationEnabled: Bool = true
+    
     // Navigation actions
     func navigate(to screen: Screen) {
         currentScreen = screen
         isMenuOpen = false
+    }
+    
+    func navigateBack() {
+        // Simple back logic: if in sub-pages, go back to top
+        // In a complex app we'd use a stack, but here it's flat from Top -> Page
+        currentScreen = .top
     }
     
     func startChat() {
@@ -48,5 +58,30 @@ class AppState {
     
     func closeMenu() {
         isMenuOpen = false
+    }
+    
+    // Data Operations
+    func saveDeck(_ deck: Deck) {
+        if let index = decks.firstIndex(where: { $0.id == deck.id }) {
+            decks[index] = deck
+        } else {
+            decks.append(deck)
+        }
+        
+        // If this was the active deck, update reference
+        if activeDeck?.id == deck.id {
+            activeDeck = deck
+        }
+    }
+    
+    func deleteDeck(_ deckId: String) {
+        decks.removeAll(where: { $0.id == deckId })
+        if activeDeck?.id == deckId {
+            activeDeck = nil
+        }
+    }
+    
+    func setActiveDeck(_ deck: Deck?) {
+        activeDeck = deck
     }
 }

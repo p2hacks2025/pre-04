@@ -101,25 +101,40 @@ class SparklerSystem {
     }
     
     private func emitParticles(deltaTime: TimeInterval, intensity: Double, tipPosition: CGPoint) {
-        // Base emission rate modified by intensity
-        let emissionRate = Int(50.0 * intensity)
-        let particlesToSpawn = Int(Double(emissionRate) * deltaTime * 60.0) // approx
+        // Base emission rate modified by intensity - BOOSTED
+        let emissionRate = Int(150.0 * intensity)
+        let particlesToSpawn = Int(Double(emissionRate) * deltaTime * 60.0) 
         
         if particlesToSpawn > 0 {
             for _ in 0..<particlesToSpawn {
                 let angle = Double.random(in: 0...(2 * .pi))
-                let speed = CGFloat.random(in: 20...(100 * CGFloat(intensity)))
+                let maxSpeed = max(30.0, 150.0 * CGFloat(intensity))
+                let speed = CGFloat.random(in: 20...maxSpeed)
                 
                 let velocity = CGPoint(x: CGFloat(cos(angle)) * speed, y: CGFloat(sin(angle)) * speed)
                 
-                particles.append(SparklerParticle(
-                    position: tipPosition,
-                    velocity: velocity,
-                    life: Double.random(in: 0.5...1.0),
-                    color: Color(red: 1.0, green: 1.0, blue: 0.8), // White-yellow
-                    scale: CGFloat.random(in: 1...3),
-                    type: .spark
-                ))
+                // Randomly spawn a "Glow" particle
+                let isGlow = Double.random(in: 0...1) < 0.1
+                
+                if isGlow {
+                     particles.append(SparklerParticle(
+                        position: tipPosition,
+                        velocity: velocity,
+                        life: Double.random(in: 0.3...0.6),
+                        color: Color(red: 1.0, green: 0.9, blue: 0.6).opacity(0.5),
+                        scale: CGFloat.random(in: 8...15), // Big soft glow
+                        type: .spark
+                    ))
+                } else {
+                    particles.append(SparklerParticle(
+                        position: tipPosition,
+                        velocity: velocity,
+                        life: Double.random(in: 0.5...1.2),
+                        color: Color(red: 1.0, green: 1.0, blue: 0.8), // White-yellow
+                        scale: CGFloat.random(in: 2...5), // Bigger sparks
+                        type: .spark
+                    ))
+                }
             }
         }
     }
@@ -128,13 +143,13 @@ class SparklerSystem {
         // Life 1.0 -> 0.0
         // White/Yellow -> Orange -> Red -> Gray
         if life > 0.8 {
-            return Color(red: 1.0, green: 1.0, blue: 0.8) // White Hot
+            return Color(red: 1.0, green: 1.0, blue: 0.9) // Ultra bright
         } else if life > 0.5 {
-            return Color(red: 1.0, green: 0.6 + (life - 0.5), blue: 0.2) // Yellow-Orange
+            return Color(red: 1.0, green: 0.8, blue: 0.4) // Golden
         } else if life > 0.2 {
-            return Color(red: 0.8 + life, green: 0.2, blue: 0.1) // Red-Orange
+            return Color(red: 1.0, green: 0.4, blue: 0.1) // Orange
         } else {
-            return Color(white: 0.5, opacity: life * 2) // Gray fade
+            return Color(white: 0.5, opacity: life * 2) // Fade out
         }
     }
     
