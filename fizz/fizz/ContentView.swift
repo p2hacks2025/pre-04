@@ -2,65 +2,49 @@
 //  ContentView.swift
 //  fizz
 //
-//  Created by technolo-gia on 2025/12/18.
+//  Created by technolo-gia on 2025/12/19.
 //
 
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @State private var appState = AppState()
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+        ZStack {
+            Group {
+                switch appState.currentScreen {
+                case .top:
+                    TopView()
+                case .waiting:
+                    WaitingView()
+                case .chat:
+                    ChatView()
+                case .end:
+                    EndView()
+                case .deck:
+                    // DeckCreatorView() // Not implemented in this first pass
+                    Text("Deck Creator Placeholder")
+                        .foregroundColor(.white)
+                case .history:
+                    // HistoryView()
+                    Text("History Placeholder")
+                        .foregroundColor(.white)
+                case .settings:
+                    // SettingsView()
+                    Text("Settings Placeholder")
+                        .foregroundColor(.white)
                 }
-                .onDelete(perform: deleteItems)
             }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-#endif
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
+            .sparklerBackground()
+            
+            MenuView()
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
+        .environment(appState)
+        .preferredColorScheme(.dark)
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
