@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9972633D2EF6C28C00BB934E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 9972633C2EF6C28C00BB934E /* FirebaseFirestore */; };
+		9972633F2EF6C34800BB934E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 9972633E2EF6C34800BB934E /* FirebaseAuth */; };
 		998882F22EF6B25600B429C7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 998882F12EF6B25600B429C7 /* GoogleService-Info.plist */; };
 		99CFC30B2EF696920026F4D5 /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 99CFC30A2EF696920026F4D5 /* FirebaseAI */; };
 		99CFC30D2EF696920026F4D5 /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = 99CFC30C2EF696920026F4D5 /* FirebaseAILogic */; };
@@ -67,6 +69,8 @@
 				99CFC30B2EF696920026F4D5 /* FirebaseAI in Frameworks */,
 				99CFC30F2EF696920026F4D5 /* FirebaseAnalytics in Frameworks */,
 				99CFC3112EF696920026F4D5 /* FirebaseAnalyticsCore in Frameworks */,
+				9972633F2EF6C34800BB934E /* FirebaseAuth in Frameworks */,
+				9972633D2EF6C28C00BB934E /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +91,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9972633B2EF6C28C00BB934E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		997E23842EF33039004E0E31 = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +106,7 @@
 				997E23AD2EF3303D004E0E31 /* fizzUITests */,
 				997E238E2EF33039004E0E31 /* Products */,
 				998882F12EF6B25600B429C7 /* GoogleService-Info.plist */,
+				9972633B2EF6C28C00BB934E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -133,6 +145,8 @@
 				99CFC30E2EF696920026F4D5 /* FirebaseAnalytics */,
 				99CFC3102EF696920026F4D5 /* FirebaseAnalyticsCore */,
 				99CFC3122EF696920026F4D5 /* FirebaseAnalyticsIdentitySupport */,
+				9972633C2EF6C28C00BB934E /* FirebaseFirestore */,
+				9972633E2EF6C34800BB934E /* FirebaseAuth */,
 			);
 			productName = fizz;
 			productReference = 997E238D2EF33039004E0E31 /* fizz.app */;
@@ -411,12 +425,12 @@
 		997E23B52EF3303D004E0E31 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = fizz/fizz.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fizz/Preview Content\"";
+				DEVELOPMENT_TEAM = 7SZ2M8HV9Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -448,12 +462,12 @@
 		997E23B62EF3303D004E0E31 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = fizz/fizz.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fizz/Preview Content\"";
+				DEVELOPMENT_TEAM = 7SZ2M8HV9Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -621,6 +635,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9972633C2EF6C28C00BB934E /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 99CFC3092EF696920026F4D5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		9972633E2EF6C34800BB934E /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 99CFC3092EF696920026F4D5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
 		99CFC30A2EF696920026F4D5 /* FirebaseAI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 99CFC3092EF696920026F4D5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

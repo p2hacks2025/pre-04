@@ -90,9 +90,47 @@ class ChatViewModel: ObservableObject {
     func sendMessage(_ text: String) {
         let msg = Message(senderId: "me", content: text, timestamp: Date())
         messages.append(msg)
+
         
         // Boost intensity slightly on talking?
         sparkAction()
+        
+        // Trigger Bot Reply
+        botReply()
+    }
+    
+    private func botReply() {
+        let delay = Double.random(in: 1.0...3.0)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self = self else { return }
+            // Only reply if chat is still active
+            if !self.mySparkler.isExtinguished && !self.partnerSparkler.isExtinguished {
+                let botText = self.generateBotResponse()
+                let msg = Message(senderId: "partner", content: botText, timestamp: Date())
+                self.messages.append(msg)
+                
+                // Partner sparkler reacts
+
+                withAnimation {
+                    self.partnerSparkler.currentIntensity = min(1.0, self.partnerSparkler.currentIntensity + SparklerState.recoveryAmount)
+                }
+            }
+        }
+    }
+    
+    private func generateBotResponse() -> String {
+        let responses = [
+            "そうなんだ！",
+            "へえ〜知らなかった",
+            "それは面白いね",
+            "もっと詳しく教えて！",
+            "わかるわかる",
+            "素敵ですね✨",
+            "今日は寒くない？",
+            "花火綺麗だね...",
+            "うんうん"
+        ]
+        return responses.randomElement() ?? "うん"
     }
     
     func sparkAction() {
@@ -105,8 +143,6 @@ class ChatViewModel: ObservableObject {
         // Recover intensity
         withAnimation {
             mySparkler.currentIntensity = min(1.0, mySparkler.currentIntensity + SparklerState.recoveryAmount)
-            // Penalty: Recovering intensity consumes a bit of handle immediately? 
-            // Or just allow it. Let's allow it as a mechanic to keep the fire alive but handle serves as absolute limit.
         }
     }
     

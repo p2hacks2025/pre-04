@@ -103,11 +103,12 @@ struct ChatView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 12) {
-                            ForEach(chatVM.messages) { msg in
+                            ForEach(chatVM.messages.suffix(6)) { msg in
                                 MessageRow(message: msg)
                                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                             }
                         }
+
                         .padding(.top, 240) // Space for sparklers
                         .padding(.bottom, 20)
                         .padding(.horizontal)
@@ -124,7 +125,7 @@ struct ChatView: View {
                 // Input Area
                 VStack(spacing: 0) {
                     // Deck Panel (Floating above input)
-                    if showDeckPanel, let deck = chatVM.selectedDeck {
+                    if showDeckPanel, let deck = appState.activeDeck {
                         VStack(alignment: .leading, spacing: 10) {
                             Text(deck.name)
                                 .font(.caption)
@@ -132,12 +133,12 @@ struct ChatView: View {
                                 .padding(.leading, 4)
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                                ForEach(deck.messages, id: \.self) { phrase in
+                                ForEach(deck.items) { item in
                                     Button(action: {
-                                        inputText = phrase
+                                        inputText = item.text
                                         showDeckPanel = false
                                     }) {
-                                        Text(phrase)
+                                        Text(item.text)
                                             .font(.caption)
                                             .foregroundColor(.white.opacity(0.9))
                                             .padding(10)
@@ -163,21 +164,24 @@ struct ChatView: View {
                     // Input Bar
                     HStack(spacing: 12) {
                         // Deck Button
-                        Button(action: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                showDeckPanel.toggle()
+                        if appState.activeDeck != nil {
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    showDeckPanel.toggle()
+                                }
+                            }) {
+                                Image(systemName: "rectangle.grid.2x2.fill") // Deck icon
+                                    .font(.system(size: 20))
+                                    .foregroundColor(showDeckPanel ? .orange : .white.opacity(0.6))
+                                    .padding(10)
+                                    .background(Material.ultraThinMaterial)
+                                    .clipShape(Circle())
+                                    .overlay(
+                                        Circle().stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    )
                             }
-                        }) {
-                            Image(systemName: "rectangle.grid.2x2.fill") // Deck icon
-                                .font(.system(size: 20))
-                                .foregroundColor(showDeckPanel ? .orange : .white.opacity(0.6))
-                                .padding(10)
-                                .background(Material.ultraThinMaterial)
-                                .clipShape(Circle())
-                                .overlay(
-                                    Circle().stroke(Color.white.opacity(0.1), lineWidth: 1)
-                                )
                         }
+
                         
                         // Text Field
                         TextField("メッセージを入力...", text: $inputText)
@@ -260,10 +264,15 @@ struct ChatView: View {
             }
         }
         .onAppear {
+            SoundManager.shared.startFireFlowerLoop() // Start looping sound
             chatVM.onFinish = {
                 endChat()
             }
         }
+        .onDisappear {
+             SoundManager.shared.stopFireFlowerLoop()
+        }
+
     }
     
     private func sendMessage() {
@@ -277,6 +286,8 @@ struct ChatView: View {
     }
     
     private func endChat() {
+        SoundManager.shared.stopFireFlowerLoop()
+        // matchManager.stopListening() // Legacy
         let history = ChatHistory(
             id: UUID().uuidString,
             date: Date(),
