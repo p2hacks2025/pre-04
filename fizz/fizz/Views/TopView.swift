@@ -12,63 +12,40 @@ struct TopView: View {
     @State private var showingGenreSelector = false
     
     // Animation states
-    @State private var candleOpacity: Double = 0.0
+    // Animation states
     @State private var textOpacity: Double = 0.5
+    @State private var isPressing: Bool = false
     
     var body: some View {
         ZStack {
             // Main Content (Candle)
             VStack {
-                Button(action: {
-                    let generator = UIImpactFeedbackGenerator(style: .medium)
+                Spacer()
+                
+                VStack(spacing: 24) {
+                    CandleView(isLit: false)
+                        .scaleEffect(isPressing ? 1.05 : 1.0)
+                        .animation(.easeInOut(duration: 0.2), value: isPressing)
+                    
+                    Text(isPressing ? "点火中..." : "長押しして火を灯す")
+                        .font(.callout)
+                        .kerning(2)
+                        .foregroundColor(.white.opacity(isPressing ? 1.0 : 0.6))
+                        .animation(.easeInOut(duration: 0.2), value: isPressing)
+                }
+                .contentShape(Rectangle()) // Ensure hit area
+                .onLongPressGesture(minimumDuration: 1.0, pressing: { pressing in
+                    isPressing = pressing
+                    if pressing {
+                        let generator = UIImpactFeedbackGenerator(style: .light)
+                        generator.impactOccurred()
+                    }
+                }) {
+                    let generator = UIImpactFeedbackGenerator(style: .heavy)
                     generator.impactOccurred()
                     appState.startChat()
-                }) {
-                    ZStack {
-                        // Candle Body
-                        RoundedRectangle(cornerRadius: 10) // rounded-t-sm roughly
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color.yellow.opacity(0.2), // amber-100/200 approximation
-                                        Color.orange.opacity(0.3)
-                                    ]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .frame(width: 80, height: 112) // w-20 h-28 (20*4, 28*4) -> 80, 112
-                            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 10)
-                            .overlay(
-                                LinearGradient(
-                                    colors: [.clear, .white.opacity(0.1), .clear],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                        
-                        // Wick
-                        Rectangle()
-                            .fill(Color.gray) // gray-800
-                            .frame(width: 2, height: 12)
-                            .offset(y: -56 - 6) // Half height + half wick
-                        
-                        // Sparkles around candle (Static/Simple animation for now)
-                        // In React code: multiple divs with random generated positions.
-                        // Here we keep it simple for MVP.
-                    }
                 }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.bottom, 32)
-                
-                Text("タップして火を灯す")
-                    .foregroundColor(.white.opacity(0.5))
-                    .opacity(textOpacity)
-                    .onAppear {
-                        withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                            textOpacity = 0.8
-                        }
-                    }
+                .padding(.bottom, 100)
             }
             
             // Bottom Genre Selector Button
