@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     @Environment(AppState.self) private var appState
+    @EnvironmentObject var matchManager: MatchManager
     @StateObject private var chatVM = ChatViewModel()
     
     @State private var inputText: String = ""
@@ -104,7 +105,7 @@ struct ChatView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(chatVM.messages.suffix(6)) { msg in
-                                MessageRow(message: msg)
+                                MessageRow(message: msg, myId: matchManager.userId)
                                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                             }
                         }
@@ -264,6 +265,7 @@ struct ChatView: View {
             }
         }
         .onAppear {
+            chatVM.setup(matchManager: matchManager)
             SoundManager.shared.startFireFlowerLoop() // Start looping sound
             chatVM.onFinish = {
                 endChat()
@@ -287,12 +289,12 @@ struct ChatView: View {
     
     private func endChat() {
         SoundManager.shared.stopFireFlowerLoop()
-        // matchManager.stopListening() // Legacy
+        matchManager.stopListening()
         let history = ChatHistory(
             id: UUID().uuidString,
             date: Date(),
             genre: appState.selectedGenre ?? .random,
-            duration: 60,
+            duration: chatVM.elapsedTime,
             messageCount: chatVM.messages.count
         )
         appState.endChat(history: history)
@@ -325,33 +327,34 @@ struct SparkleBackground: View {
 
 struct MessageRow: View {
     let message: Message
+    let myId: String
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            if message.senderId == "me" { Spacer() }
+            if message.senderId == myId { Spacer() }
             
             Text(message.content)
                 .font(.system(size: 15))
                 .lineSpacing(4)
-                .foregroundColor(message.senderId == "me" ? Color(hex: "fff3e0") : .white.opacity(0.9)) // Warm white for me
+                .foregroundColor(message.senderId == myId ? Color(hex: "fff3e0") : .white.opacity(0.9)) // Warm white for me
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(
-                    message.senderId == "me"
+                    message.senderId == myId
                     ? Color.white.opacity(0.1)
                     : Color.blue.opacity(0.2)
                 )
-                .cornerRadius(18, corners: message.senderId == "me"
+                .cornerRadius(18, corners: message.senderId == myId
                               ? [.topLeft, .topRight, .bottomLeft]
                               : [.topLeft, .topRight, .bottomRight])
                 .overlay(
-                    RoundedCorner(radius: 18, corners: message.senderId == "me"
+                    RoundedCorner(radius: 18, corners: message.senderId == myId
                                   ? [.topLeft, .topRight, .bottomLeft]
                                   : [.topLeft, .topRight, .bottomRight])
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
                 )
             
-            if message.senderId != "me" { Spacer() }
+            if message.senderId != myId { Spacer() }
         }
     }
 }

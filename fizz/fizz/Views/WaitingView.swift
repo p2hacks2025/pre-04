@@ -9,6 +9,8 @@ import SwiftUI
 
 struct WaitingView: View {
     @Environment(AppState.self) private var appState
+    @EnvironmentObject var matchManager: MatchManager
+
     
     // Animation States
     @State private var isMatched = false
@@ -79,8 +81,10 @@ struct WaitingView: View {
                 
                 if !isMatched {
                     Button("キャンセル") {
+                        matchManager.cancelMatching()
                         appState.backToTop()
                     }
+
                     .foregroundColor(.white.opacity(0.6))
                     .padding(.top, 20) // spacing from content
                     .padding(.bottom, 50) // extra bottom safe area
@@ -89,14 +93,18 @@ struct WaitingView: View {
             }
         }
         .onAppear {
-            startMatchingSimulation()
+            matchManager.startMatching()
         }
-    }
-    
-    private func startMatchingSimulation() {
-        // Simulate Match Delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            startIgnitionSequence()
+        .onDisappear {
+            // Safety cleanup if view vanishes without match
+            if !matchManager.matchFound {
+                matchManager.cancelMatching()
+            }
+        }
+        .onChange(of: matchManager.matchFound) { oldValue, newValue in
+            if newValue {
+                startIgnitionSequence()
+            }
         }
     }
     
@@ -110,28 +118,6 @@ struct WaitingView: View {
         showSparkler = true
         
         withAnimation(.easeInOut(duration: 1.5)) {
-            // Adjust offsets for the new bottom-aligned layout
-            // Sparkler view height is 300. Handle is ~180. Center is at 150.
-            // ZStack alignment is center.
-            // Candle is at center.
-            // We want sparkler tip (bottom of handle) to meet candle flame (top of candle).
-            
-            // Start high up (offscreen) -> Move down
-            // Initial state (set in property): -400.
-            
-            // Target state:
-            // If sparkler center is at 0, its tip is at +something?
-            // SparklerView draws from top(0) to length.
-            // In SparklerView: origin=(centerX,0), tip=(centerX, length).
-            // So View origin is Top-Center of frame? No, GeometryReader.
-            // Frame is 300. Length 180. Tip at y=180.
-            // If offset is 0, frame intersects ZStack center.
-            // Candle (Circle) frame default ~60?
-            // Flame matches candle top.
-            
-            // We want Sparkler Tip (y=180 relative to frame top) to be at Candle Top.
-            // Let's set target offset such that sparkler descends.
-            
             sparklerOffsetY = -80 // Move down significantly.
             candleOffset = 0 // Keep candle steady
         }
@@ -141,6 +127,7 @@ struct WaitingView: View {
             igniteSparkler()
         }
     }
+
     
     private func igniteSparkler() {
         // Intense burst
