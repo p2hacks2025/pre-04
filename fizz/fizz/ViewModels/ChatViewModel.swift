@@ -25,13 +25,19 @@ class ChatViewModel: ObservableObject {
     var onFinish: (() -> Void)?
     
     init() {
-        self.mySparkler = SparklerState(maxDuration: 60, currentIntensity: 1.0)
-        self.partnerSparkler = SparklerState(maxDuration: 60, currentIntensity: 1.0)
+        let randomDuration = Double.random(in: 60...180)
+        self.mySparkler = SparklerState(maxDuration: randomDuration, currentIntensity: 1.0)
+        self.partnerSparkler = SparklerState(maxDuration: randomDuration, currentIntensity: 1.0)
         self.sessionStartTime = Date()
         self.selectedDeck = availableDecks.first
         
         startTimer()
     }
+    
+    var elapsedTime: TimeInterval {
+        return Date().timeIntervalSince(sessionStartTime)
+    }
+
     
     func startTimer() {
         timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
@@ -87,51 +93,30 @@ class ChatViewModel: ObservableObject {
         }
     }
     
+    // MatchManager dependency
+    private var matchManager: MatchManager?
+    private var cancellables = Set<AnyCancellable>()
+    
+    func setup(matchManager: MatchManager) {
+        self.matchManager = matchManager
+        
+        // Sync messages from MatchManager
+        matchManager.$messages
+            .receive(on: RunLoop.main)
+            .assign(to: \.messages, on: self)
+            .store(in: &cancellables)
+    }
+    
     func sendMessage(_ text: String) {
-        let msg = Message(senderId: "me", content: text, timestamp: Date())
-        messages.append(msg)
-
+        guard let matchManager = matchManager else { return }
+        matchManager.sendMessage(text)
         
         // Boost intensity slightly on talking?
         sparkAction()
-        
-        // Trigger Bot Reply
-        botReply()
     }
     
-    private func botReply() {
-        let delay = Double.random(in: 1.0...3.0)
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-            guard let self = self else { return }
-            // Only reply if chat is still active
-            if !self.mySparkler.isExtinguished && !self.partnerSparkler.isExtinguished {
-                let botText = self.generateBotResponse()
-                let msg = Message(senderId: "partner", content: botText, timestamp: Date())
-                self.messages.append(msg)
-                
-                // Partner sparkler reacts
+    // Bot logic removed
 
-                withAnimation {
-                    self.partnerSparkler.currentIntensity = min(1.0, self.partnerSparkler.currentIntensity + SparklerState.recoveryAmount)
-                }
-            }
-        }
-    }
-    
-    private func generateBotResponse() -> String {
-        let responses = [
-            "そうなんだ！",
-            "へえ〜知らなかった",
-            "それは面白いね",
-            "もっと詳しく教えて！",
-            "わかるわかる",
-            "素敵ですね✨",
-            "今日は寒くない？",
-            "花火綺麗だね...",
-            "うんうん"
-        ]
-        return responses.randomElement() ?? "うん"
-    }
     
     func sparkAction() {
         let now = Date()

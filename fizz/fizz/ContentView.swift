@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var appState = AppState()
+    @StateObject private var matchManager = MatchManager()
+
 
     var body: some View {
         ZStack {
@@ -35,9 +37,11 @@ struct ContentView: View {
             MenuView()
         }
         .environment(appState)
+        .environmentObject(matchManager)
         .preferredColorScheme(.dark)
     }
 }
+
 
 #Preview {
     ContentView()
